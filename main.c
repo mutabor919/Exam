@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <assert.h>
 
 typedef struct Vector {
     int *data;
@@ -46,17 +47,79 @@ void deleteVector(Vector *vec) {
     free(vec);
 }
 
-int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    Vector *vec = createVector(3);
+//Тесты.
+void testCreateVector() {
+    Vector *vec = createVector(5);
+
+    assert(vec != NULL);  // Проверка, что вектор создан
+    assert(vec->data != NULL);  // Проверка, что данные выделены
+    assert(vec->size == 0);  // Проверка начального размера
+    assert(vec->capacity == 5);  // Проверка начальной емкости
+    assert(vec->next == NULL);  // Проверка, что следующий узел пуст
+
+    deleteVector(vec);
+}
+
+void testAddElement() {
+    Vector *vec = createVector(2);
+
+    addElement(vec, 1);
+    addElement(vec, 2);
+    addElement(vec, 3);
+
+    // Проверка размера и данных в первом узле
+    assert(vec->size == 2);
+    assert(vec->data[0] == 1);
+    assert(vec->data[1] == 2);
+
+    // Проверка наличия и данных в следующем узле
+    assert(vec->next != NULL);
+    assert(vec->next->size == 1);
+    assert(vec->next->data[0] == 3);
+
+    deleteVector(vec);
+}
+
+void testGetElement() {
+    Vector *vec = createVector(4);
+
     addElement(vec, 1);
     addElement(vec, 2);
     addElement(vec, 3);
     addElement(vec, 4);
 
-    printf("Элемент по индексу 2: %d\n", getElement(vec, 2));
+    // Проверка получения элементов по индексам
+    assert(getElement(vec, 0) == 1);
+    assert(getElement(vec, 1) == 2);
+    assert(getElement(vec, 2) == 3);
+    assert(getElement(vec, 3) == 4);
 
+    deleteVector(vec);  // Освобождение памяти
+}
+
+void testDeleteVector() {
+    Vector *vec = createVector(2);
+
+    addElement(vec, 1);
+    addElement(vec, 2);
+    addElement(vec, 3);
+
+    // Здесь проверяем, что deleteVector не вызывает сбоев
     deleteVector(vec);
+
+    assert(1);
+}
+
+void  test() {
+    testCreateVector();
+    testAddElement();
+    testGetElement();
+    testDeleteVector();
+}
+
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    test();
 
     return 0;
 }
